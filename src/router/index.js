@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import slotInfo from '../views/slotInfo.vue'
+import timer from '../views/timer.vue'
 
 Vue.use(VueRouter)
 
@@ -10,6 +12,32 @@ const routes = [
     name: 'Home',
     component: Home
   },
+  {
+    path: '/slot',
+    name: 'slotInfo',
+    component: slotInfo
+  },
+  {
+    path: '/timer',
+    name: 'timer',
+    component: timer
+  },
+  {
+    path: '/timer',
+    name: 'timer',
+    component: () => import('../views/timer.vue')
+  },
+  {
+    path: '/Submit',
+    name: 'Submit',
+    component: () => import('../views/Submit.vue')
+  },
+  {
+    path: '/results/:displayRound?',
+    name: 'results',
+    component: () => import('../views/Results.vue')
+  },
+
   {
     path: '/about',
     name: 'About',
