@@ -2,27 +2,26 @@
   <div class="text-primary text-center">
             <div class="container text-primary text-center">
             <div class="row my-2">
-            <div class="col-6">
-            <button
-              class="btn btn-block btn-outline-success py-2"
-              v-on:click="$router.replace('Submit')"
-              v-bind:class="{ 'btn-success active': rawTimes.length > 0 }"
-              :disabled="rawTimes.length === 0"
-              type="submit">
-                Submit
-              </button>
-              </div>
               <div class="col-6">
             <button
               class="btn btn-block  btn-outline-warning py-2"
-              v-bind:class="{ 'btn-warning active': rawTimes.length > 0 }"
-              :disabled="rawTimes.length === 0 "
+              v-bind:class="{ 'btn-warning active': rawTimes.length > 0 && !running}"
+              :disabled="rawTimes.length === 0 || running"
               data-toggle="modal" data-target="#modalClear"
               type="submit">
                 Clear
               </button>
               </div>
-
+            <div class="col-6">
+            <button
+              class="btn btn-block btn-outline-success py-2"
+              v-on:click="$router.replace('Submit')"
+              v-bind:class="{ 'btn-success active': rawTimes.length > 0 && !running}"
+              :disabled="rawTimes.length === 0 || running"
+              type="submit">
+                Submit
+              </button>
+              </div>
             </div>
             </div>
 <!-- Modal -->
@@ -105,12 +104,8 @@ function formatTime (time, showTenths = false) {
 
 export default {
   name: 'stopwatch',
-  state: {
-    startedTime: null,
-    running: false
-  },
   data () {
-    return { elapsed: 0, clicks: 0 }
+    return { elapsed: 0, clicks: 0, running: false, startedTime: null }
   },
   computed: {
     ...mapState('result', [

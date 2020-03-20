@@ -219,6 +219,8 @@ const result = {
       state.penalty = payload
     },
     RECORD_TIME (state, payload) {
+      // Truncate to 1 decimal point
+      payload.time = Math.floor(payload.time * 10) / 10
       state.rawTimes.push(payload) // { time: <seconds>, valid: true }
     },
     CLEAR_TIMES (state, payload) {

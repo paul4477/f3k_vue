@@ -1,11 +1,11 @@
 <template>
 <div>
-<!-- Modal -->
+<!-- Penalty Modal -->
 <div class="modal fade" id="modalPenalty" tabindex="-1" role="dialog" aria-labelledby="addPenalty" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add penalty</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Set penalty points</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -13,31 +13,37 @@
       <div id="modalMessageBody" class="modal-body">
         <div class="md-form mb-5">
           <i class="fas fa-user prefix grey-text"></i>
-          <input type="text" id="form34" pattern = "[0-9]*" placeholder="0" inputmode="numeric" class="form-control validate">
+          <input type="text" id="form34" v-model="penalty" pattern = "[0-9]*" placeholder="0" inputmode="numeric" class="form-control validate">
           <label data-error="wrong" data-success="right" for="form34">Penalty</label>
         </div>
-        <div class="md-form">
-          <i class="fas fa-pencil prefix grey-text"></i>
-          <textarea type="text" id="form8" class="md-textarea form-control" placeholder="Reason penalty was incurred..." rows="4"></textarea>
-          <label data-error="wrong" data-success="right" for="form8">Notes</label>
-        </div>
+      </div>
+      <div class="modal-footer">
+                <button type="button" data-dismiss="modal" v-on:click="addPenalty" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Input Alert Modal -->
+<div class="modal fade" id="modalInvalid" tabindex="-1" role="dialog" aria-labelledby="addPenalty" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Input Error</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div id="modalMessageBody" class="modal-body">
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="button" data-dismiss="modal" v-on:click="addPenalty" class="btn btn-primary">Submit</button>
+        <button type="button" data-dismiss="modal" class="btn btn-primary">Dismiss</button>
       </div>
     </div>
   </div>
 </div>
 
 <div class="row mt-2">
-    <!-- <div class="form-group">
-    <label> Choose competition</label>
-    <select for="competition" v-model="$store.state.comp.id" class="ml-2 px-1">
-      <option value="" >Choose...</option>
-      <option v-for="comp in comps" :key="comp._id" v-bind:value="comp.CompID">{{ comp.CompName }} | {{ new Date(comp.CompDate).toDateString() }}</option>
-    </select> -->
   <div class="col-7">
     <div class="h5 text-center">Flight Times</div>
     <div class="container-fluid btn-group-vertical p-2 " >
@@ -65,16 +71,16 @@
             <input  :key="time.id" type="text"
             class="form-control big-text py-0"
             v-on:click="checkDouble"
-            placeholder="00:00.0"
+            placeholder="-----"
             v-bind:id="index"
             pattern = "[0-9]*"
             inputmode="numeric"
-            v-on:focusin="(e) => { e.target.value=''}"
+            @focus="$event.target.value=''"
+            @blur="validateNotEmpty($event)"
             v-bind:value="time[0] | secondsToString"
             v-on:change="validateTime" />
           </div>
         </div>
-        <!--<input type="text" v-model="time[0]" />-->
       </template>
 
   </form>
@@ -88,23 +94,23 @@
             <div class="row my-2">
             <div class="col-6">
             <button
-              class="btn btn-block btn-outline-success py-2"
-              v-on:click="submitResults"
-              v-bind:class="{ 'btn-success active': (rawTimes.length > 0 && $store.state.result.pilotNo !== '0') }"
-              v-bind:disabled="rawTimes.length === 0 || $store.state.result.pilotNo === '0' || $store.state.result.pilotNo === 0"
-              type="submit">
-                Submit
-              </button>
-              </div>
-              <div class="col-6">
-            <button
               class="btn btn-block btn-outline-warning py-2"
               v-bind:class="{ 'btn-warning active': rawTimes.length > 0 }"
               :disabled="rawTimes.length === 0"
               data-toggle="modal" data-target="#modalPenalty"
 
               type="submit">
-                Add Penalty
+                Penalty
+              </button>
+              </div>
+            <div class="col-6">
+            <button
+              class="btn btn-block btn-outline-success py-2"
+              v-on:click="submitResults"
+              v-bind:class="{ 'btn-success active': (rawTimes.length > 0 && $store.state.result.pilotNo !== '0') }"
+              v-bind:disabled="rawTimes.length === 0 || $store.state.result.pilotNo === '0' || $store.state.result.pilotNo === 0"
+              type="submit">
+                Submit
               </button>
               </div>
 
@@ -132,7 +138,7 @@ export default {
     pilotChooser
   },
   data () {
-    return { clicks: 0, processedTimes: [], errors: [] }
+    return { clicks: 0, penalty: 0, processedTimes: [], errors: [] }
   },
   computed: {
     ...mapState('result', [
@@ -153,14 +159,11 @@ export default {
     this.processScores()
   },
   methods: {
-    timeUpdated (event) {
-      console.log(event)
-    },
     processScores () {
-      console.log('processing scores')
+      // console.log('processing scores')
       this.isLoading = true
       axios.post(`/api/comp/${this.id}/round/${this.round}/score`, this.rawTimes)
-        .then(response => { this.processedTimes = response.data; console.log('processed', response.data) })
+        .then(response => { this.processedTimes = response.data })
         .catch(e => {})
         .finally(() => { this.isLoading = false })
     },
@@ -173,16 +176,19 @@ export default {
         // clearTimeout(this.timeoutId)
         this.clicks = 0
         const newValue = this.processedTimes[parseInt(event.target.id)]
-        newValue[0] = newValue[1] // Set max
-        this.processedTimes.splice(parseInt(event.target.id), 1, newValue)
+        // Set max unless is zero (as it is for poker)
+        if (newValue[1] !== 0) {
+          newValue[0] = newValue[1] // Set max
+          this.processedTimes.splice(parseInt(event.target.id), 1, newValue)
+        }
         // console.log(event.target)
       }
     },
     submitResults (state, commit) {
       console.log('in submitResults.submitResults')
-      console.log(this.processedTimes[0])
-      const data = this.processedTimes.map((x) => { return x[0] })
-      console.log(data)
+      // console.log(this.processedTimes[0])
+      const data = { times: this.processedTimes.map((x) => { return x[0] }), penalty: this.penalty }
+      // console.log(data)
       axios.put(`/api/comp/${this.id}/round/${this.round}/score/${this.pilotNo}`, data)
         .then(response => { console.log('submitted', response.data) })
         .catch(e => {})
@@ -197,7 +203,9 @@ export default {
       // }
     },
     addPenalty (state, commit) {
-      console.log('write some code to add penalties!')
+      // console.log('write some code to add penalties!')
+      this.penalty = parseInt(this.penalty) ? parseInt(this.penalty) : 0
+      // console.log(this.penalty)
     },
     formatTime (time, showTenths = false) {
       function pad0 (value, count) {
@@ -216,22 +224,25 @@ export default {
     },
     modalAlert (message) {
       const modal = $('#modalInvalid')
-      console.log(modal.find('.modal-body'))
+      // console.log(modal.find('.modal-body'))
       modal.find('.modal-body')[0].innerText = message
       modal.modal()
     },
-    validateTime (event) {
-      // Assume input is a string of digits
-      // Assume that we exclude leading zeros and it is min <= 9, secs <=59 (with leading zero) and 0 <= tenths <=9
-
-      let inputString = event.target.value
+    validateNotEmpty (event) {
+      const inputString = event.target.value
       const processedTimesIndex = parseInt(event.target.id)
       const newValue = this.processedTimes[processedTimesIndex]
 
       if (inputString === '') {
-        console.log('no input')
         this.processedTimes.splice(processedTimesIndex, 1, newValue)
       }
+    },
+    validateTime (event) {
+      // Assume input is a string of digits
+      // Assume that we exclude leading zeros and it is min <= 9, secs <=59 (with leading zero) and 0 <= tenths <=9
+      let inputString = event.target.value
+      const processedTimesIndex = parseInt(event.target.id)
+      const newValue = this.processedTimes[processedTimesIndex]
 
       if (inputString.length > 5) {
         this.modalAlert('Input string is too long.')
@@ -283,7 +294,7 @@ export default {
       }
       const realTime = (parseInt(mins) * 60) + parseInt(secs) + (parseInt(tenths) / 10)
 
-      if (realTime > this.processedTimes[processedTimesIndex][1]) {
+      if (realTime > this.processedTimes[processedTimesIndex][1] && this.processedTimes[processedTimesIndex][1] !== 0) {
         this.modalAlert('Time entered exceeds the maximum.')
         this.processedTimes.splice(processedTimesIndex, 1, newValue)
         return

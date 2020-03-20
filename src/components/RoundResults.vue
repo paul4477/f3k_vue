@@ -88,7 +88,7 @@ export default {
     if (parseInt(this.$route.params.displayRound) > 0) {
       this.setRoundScores()
     } else {
-      alert('implement ful score view')
+      alert('Implement full score view!')
     }
   }
 }
