@@ -1,25 +1,25 @@
 <template>
   <div class="text-center"
   v-bind:class="{
-    'bg-secondary': !canFly,
+    'bg-danger': !canFly,
     'bg-light': canFly,
     'text-dark': !canFly
   }">
 
     <div class="row">
-      <div class="p-2 flex-fill h4 mb-0" v-bind:class="{'text-primary': canFly, 'text-dark': !canFly}">Round: {{ round }}</div>
-      <div class="p-2 flex-fill h4 mb-0" v-bind:class="{'text-primary': canFly, 'text-dark': !canFly}"> Group: {{ group }}</div>
+      <div class="p-2 flex-fill h4 mb-0" v-bind:class="{'text-primary': canFly, 'text-light': !canFly}">Round: {{ round }}</div>
+      <div class="p-2 flex-fill h4 mb-0" v-bind:class="{'text-primary': canFly, 'text-light': !canFly}"> Group: {{ group }}</div>
     </div>
 
     <div class="row">
-      <div class="col-6 h1 mb-0 text-monospace" v-bind:class="{'text-primary': canFly, 'text-dark': !canFly}">
+      <div class="col-6 h1 mb-0 text-monospace" v-bind:class="{'text-primary': canFly, 'text-light': !canFly}">
         {{ timeString }}
       </div>
       <div class="col px-0 mb-0">
-      <div class="col h6 align-self-center px-auto mb-0" v-bind:class="{'text-primary': canFly, 'text-dark': !canFly}">
+      <div class="col h6 align-self-center px-auto mb-0" v-bind:class="{'text-primary': canFly, 'text-light': !canFly}">
         {{ shortTaskDescription }}
         </div>
-      <div class="col h4 px-auto text-monospace mb-0" v-bind:class="{'text-primary': canFly, 'text-dark': !canFly}">
+      <div class="col h4 px-auto text-monospace mb-0" v-bind:class="{'text-primary': canFly, 'text-light': !canFly}">
         {{ slotState }}
       </div>
       </div>
