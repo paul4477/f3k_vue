@@ -12,13 +12,81 @@
       </div>
       <div id="modalMessageBody" class="modal-body">
         <div class="md-form mb-5">
-          <i class="fas fa-user prefix grey-text"></i>
-          <input type="text" id="form34" v-model="penalty" pattern = "[0-9]*" placeholder="0" inputmode="numeric" class="form-control validate">
+          <!-- <input type="text" id="form34" v-model="penalty" pattern = "[0-9]*" placeholder="0" inputmode="numeric" class="form-control validate">-->
+          <!-- <input type="text" id="form34" v-model="penalty" pattern = "[0-9]*" placeholder="0" inputmode="numeric" class="form-control validate"> -->
+          <select id="form34" v-model="penalty" class="form-control">
+            <option>0</option>
+            <option>100</option>
+            <option>300</option>
+          </select>
           <label data-error="wrong" data-success="right" for="form34">Penalty</label>
         </div>
       </div>
       <div class="modal-footer">
                 <button type="button" data-dismiss="modal" v-on:click="addPenalty" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Submission confirmation Modal -->
+<div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="confirmSubmit" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Confirm Results Submission</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div id="modalMessageBody" class="modal-body">
+        <div class="md-form mb-5">
+<!--        <div class="form-row">
+        <template v-for="(time, index) in processedTimes">
+
+            <div class="form-group col-6" :key="time.id">
+              <label  :key="time.id"
+              v-bind:for="index">Score {{ index + 1 }}, Max: {{ time[1] | secondsToString }}</label>
+              <input  :key="time.id" type="text"
+              class="form-control"
+              v-bind:id="index"
+              readonly
+              v-bind:value="time[0] | secondsToString" />
+            </div>
+
+        </template>
+          </div> -->
+          <div class="form-row">
+            <div class="form-group col align-self-center">
+              <label data-error="wrong" data-success="right" for="form34">Total</label>
+            </div>
+            <div class="form-group col">
+            <input type="text" id="form34" v-bind:value="processedTimes.reduce((total, arr) => { return total + arr[0] }, 0) | secondsToString" readonly class="form-control validate">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col align-self-center">
+              <label data-error="wrong" data-success="right" for="form35">Dropped</label>
+            </div>
+            <div class="form-group col align-self-center">
+             <!-- Use toFixed here to avoid fp inaccuracies -->
+             <input v-if="processedTimes.reduce((total, arr) => { return total + arr[1] }, 0) > 0" type="text" id="form35" v-bind:value="(processedTimes.reduce((total, arr) => { return total + arr[1] }, 0) - processedTimes.reduce((total, arr) => { return total + arr[0] }, 0)).toFixed(1) | secondsToString" readonly disabled class="form-control validate">
+             <input v-if="processedTimes.reduce((total, arr) => { return total + arr[1] }, 0) === 0" type="text" id="form35" value="-- : -- : --" readonly disabled class="form-control validate">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col align-self-center">
+              <label data-error="wrong" data-success="right" for="form36">Penalty</label>
+            </div>
+            <div class="form-group col">
+            <input type="text" id="form36" v-model="penalty" is-valid readonly disabled class="form-control validate">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-secondary">Cancel</button>
+                <button type="button btn-primary" data-dismiss="modal" v-on:click="submitResults" class="btn btn-primary">Submit</button>
       </div>
     </div>
   </div>
@@ -106,9 +174,9 @@
             <div class="col-6">
             <button
               class="btn btn-block btn-outline-success py-2"
-              v-on:click="submitResults"
               v-bind:class="{ 'btn-success active': (rawTimes.length > 0 && $store.state.result.pilotNo !== '0') }"
               v-bind:disabled="rawTimes.length === 0 || $store.state.result.pilotNo === '0' || $store.state.result.pilotNo === 0"
+              data-toggle="modal" data-target="#modalConfirm"
               type="submit">
                 Submit
               </button>
